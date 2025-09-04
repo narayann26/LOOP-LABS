@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>LOOP-LABS</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(120deg, #232526 0%, #FFD700 100%);
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+        }
+        .split-layout {
+            display: flex;
+            flex-direction: row;
+            min-height: 100vh;
+        }
+        .left-panel, .right-panel {
+            flex: 1;
+            padding: 24px;
+            box-sizing: border-box;
+        }
+        .left-panel {
+            background: #181818;
+            border-right: 2px solid #FFD700;
+        }
+        .right-panel {
+            background: #232526;
+        }
+        .container {
+            max-width: 500px;
+            margin: 40px auto;
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(255,215,0,0.12);
+            padding: 32px 24px;
+            text-align: center;
+            background: #181818;
+        }
+        h1, h2 {
+            color: #FFD700;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 8px #232526;
+        }
+        .info, .dashboard {
+            color: #FFD700;
+            margin-bottom: 24px;
+            font-size: 1.1rem;
+            background: #232526;
+            border-radius: 8px;
+            padding: 10px;
+            box-shadow: 0 2px 8px rgba(255,215,0,0.08);
+        }
+        .start-btn, .back-btn, .path-btn, .feedback-btn {
+            background: linear-gradient(90deg, #FFD700 0%, #232526 100%);
+            color: #181818;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 24px;
+            font-size: 1rem;
+            cursor: pointer;
+            margin: 12px 0;
+            font-weight: bold;
+            box-shadow: 0 2px 8px rgba(255,215,0,0.12);
+            transition: background 0.2s, color 0.2s;
+        }
+        .start-btn:hover, .back-btn:hover, .path-btn:hover, .feedback-btn:hover {
+            background: linear-gradient(90deg, #232526 0%, #FFD700 100%);
+            color: #FFD700;
+        }
+        .question-list {
+            text-align: left;
+            margin-top: 24px;
+        }
+        .question {
+            background: #232526;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 18px;
+            box-shadow: 0 2px 8px rgba(255,215,0,0.08);
+        }
+        .question-title {
+            font-weight: bold;
+            color: #FFD700;
+            margin-bottom: 8px;
+            text-shadow: 0 2px 8px #181818;
+        }
+        .try-btn, .code-btn, .play-btn, .pause-btn, .step-btn {
+            background: #FFD700;
+            color: #181818;
+            border: none;
+            border-radius: 6px;
+            padding: 6px 16px;
+            font-size: 0.95rem;
+            cursor: pointer;
+            margin-right: 8px;
+            margin-top: 6px;
+            font-weight: bold;
+            transition: background 0.2s, color 0.2s;
+        }
+        .try-btn:hover, .play-btn:hover, .pause-btn:hover, .step-btn:hover {
+            background: #181818;
+            color: #FFD700;
+        }
+        .code-btn {
+            background: #232526;
+            color: #FFD700;
+            border: 2px solid #FFD700;
+        }
+        .code-btn:hover {
+            background: #FFD700;
+            color: #181818;
+        }
+        .question-area {
+            margin-top: 24px;
+        }
+        .code-area {
+            background: #181818;
+            color: #FFD700;
+            border-radius: 8px;
+            padding: 16px;
+            margin-top: 18px;
+            font-size: 0.95rem;
+            text-align: left;
+            overflow-x: auto;
+            border: 2px solid #FFD700;
+        }
+        input[type="text"] {
+            width: 90%;
+            padding: 10px;
+            margin: 12px 0;
+            border: 1px solid #FFD700;
+            border-radius: 8px;
+            font-size: 1rem;
+            background: #232526;
+            color: #FFD700;
+            transition: border-color 0.2s;
+        }
+        input[type="text"]:focus {
+            border-color: #FFD700;
+            outline: none;
+        }
+        label {
+            color: #FFD700;
+            font-weight: bold;
+        }
+        #result {
+            margin-top: 18px;
+            font-size: 1.1rem;
+            color: #FFD700;
+            min-height: 24px;
+        }
+        .found {
+            color: #FFD700;
+            font-weight: bold;
+            text-shadow: 0 2px 8px #232526;
+        }
+        .notfound {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+        .badge {
+            display: inline-block;
+            background: #FFD700;
+            color: #181818;
+            border-radius: 12px;
+            padding: 4px 12px;
+            margin: 4px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            box-shadow: 0 2px 8px rgba(255,215,0,0.12);
+        }
+        .leaderboard {
+            background: #232526;
+            color: #FFD700;
+            border-radius: 8px;
+            padding: 12px;
+            margin-top: 18px;
+            font-size: 1rem;
+        }
+        .feedback-area {
+            margin-top: 24px;
+            background: #232526;
+            border-radius: 8px;
+            padding: 16px;
+            color: #FFD700;
+        }
+        .feedback-area textarea {
+            width: 90%;
+            border-radius: 8px;
+            border: 1px solid #FFD700;
+            padding: 8px;
+            background: #181818;
+            color: #FFD700;
+            font-size: 1rem;
+        }
+        .paths-list {
+            margin-top: 18px;
+            text-align: left;
+        }
+        .path-title {
+            color: #FFD700;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+        .mobile-hide { display: block; }
+        @media (max-width: 900px) {
+            .split-layout { flex-direction: column; }
+            .left-panel, .right-panel { border: none; }
+            .mobile-hide { display: none; }
+        }
+        /* Visualization styles */
+        .viz-array {
+            display: flex;
+            gap: 10px;
+            margin: 24px 0;
+            justify-content: center;
+        }
+        .viz-box {
+            background: #FFD700;
+            color: #181818;
+            border-radius: 8px;
+            padding: 18px 12px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            min-width: 40px;
+            text-align: center;
+            box-shadow: 0 2px 8px #232526;
+            transition: background 0.3s, color 0.3s, transform 0.3s;
+        }
+        .viz-active {
+            background: #e67e22;
+            color: #fff;
+            transform: scale(1.1);
+        }
+        .viz-compare {
+            background: #e74c3c;
+            color: #fff;
+            transform: scale(1.1);
+        }
+        .viz-found {
+            background: #27ae60;
+            color: #fff;
+            transform: scale(1.1);
+        }
+        .viz-caption {
+            color: #FFD700;
+            margin-top: 12px;
+            font-size: 1rem;
+            text-align: center;
+        }
+        .viz-controls {
+            margin-top: 18px;
+            text-align: center;
+        }
+        .lang-select {
+            margin-bottom: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="split-layout">
+        <div class="left-panel" id="left-panel">
+            <!-- Content injected by JS -->
+        </div>
+        <div class="right-panel" id="right-panel">
+            <!-- Visualization injected by JS -->
+        </div>
+    </div>
+    <script>
+        // --- Data ---
+        const beginnerPaths = [
+            {
+                title: "Arrays",
+                topics: ["Find Largest", "Find 2nd Largest", "Duplicate Finder", "Prime Checker"]
+            },
+            {
+                title: "Loops",
+                topics: ["Duplicate Finder", "Two Sum", "Prime Checker"]
+            },
+            {
+                title: "Conditionals",
+                topics: ["Two Sum", "Prime Checker"]
+            },
+            {
+                title: "Mini Puzzles",
+                topics: ["Timed Challenge: Find All Primes", "Timed Challenge: Find All Duplicates"]
+            }
+        ];
+        const allQuestions = [
+            { id: "duplicate", title: "Duplicate Finder", path: "Arrays" },
+            { id: "twosum", title: "Two Sum Question", path: "Loops" },
+            { id: "secondLargest", title: "Find 2nd Largest Element", path: "Arrays" },
+            { id: "largest", title: "Find Largest Element", path: "Arrays" },
+            { id: "primeChecker", title: "Prime Number Checker in Array", path: "Arrays" }
+        ];
+        const badgesList = [
+            { id: "first", label: "First Problem Solved" },
+            { id: "five", label: "5 Problems Solved" },
+            { id: "arrays", label: "Arrays Path Completed" }
+        ];
+        const leaderboardDemo = [
+            { name: "Narayan", points: 120 },
+            { name: "Amit", points: 80 },
+            { name: "Priya", points: 60 }
+        ];
+        const javaCodes = {
+            duplicate: `public class DuplicateFinder {
+    public static void findDuplicates(int arr[]) {
+        int x = arr.length;
+        for (int a = 0; a < x; a++) {
+            for (int b = a + 1; b < x; b++) {
+                if (arr[a] == arr[b]) {
+                    System.out.println("Duplicate element found: " + arr[a]);
+                }
+            }
+        }
+    }
+}`,
+            twosum: `public class TwoSum {
+    public static boolean hasTwoSum(int arr[], int target) {
+        for (int i = 0; i < arr.length; i++) {
+            for (int j = i + 1; j < arr.length; j++) {
+                if (arr[i] + arr[j] == target) {
+                    System.out.println("Pair found: " + arr[i] + ", " + arr[j]);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+}`,
+            secondLargest: `public class SecondLargest {
+    public static int findSecondLargest(int arr[]) {
+        int largest = Integer.MIN_VALUE, second = Integer.MIN_VALUE;
+        for (int num : arr) {
+            if (num > largest) {
+                second = largest;
+                largest = num;
+            } else if (num > second && num != largest) {
+                second = num;
+            }
+        }
+        return second;
+    }
+}`,
+            largest: `public class LargestElement {
+    public static int findLargest(int arr[]) {
+        int largest = arr[0];
+        for (int num : arr) {
+            if (num > largest) largest = num;
+        }
+        return largest;
+    }
+}`,
+            primeChecker: `public class PrimeChecker {
+    public static void checkPrimes(int arr[]) {
+        for (int num : arr) {
+            if (isPrime(num)) {
+                System.out.println(num + " is prime");
+            }
+        }
+    }
+    private static boolean isPrime(int n) {
+        if (n <= 1) return false;
+        for (int i = 2; i <= Math.sqrt(n); i++) {
+            if (n % i == 0) return false;
+        }
+        return true;
+    }
+}`
+        };
+        const problemStatements = {
+            duplicate: {
+                en: "Find all duplicate elements in an array.",
+                hi: "एक array में सभी duplicate तत्व खोजें।"
+            },
+            twosum: {
+                en: "Find two numbers in an array that add up to a target sum.",
+                hi: "एक array में दो संख्याएँ खोजें जिनका योग target sum के बराबर हो।"
+            },
+            secondLargest: {
+                en: "Find the second largest element in an array.",
+                hi: "एक array में दूसरा सबसे बड़ा तत्व खोजें।"
+            },
+            largest: {
+                en: "Find the largest element in an array.",
+                hi: "एक array में सबसे बड़ा तत्व खोजें।"
+            },
+            primeChecker: {
+                en: "Check which numbers in an array are prime.",
+                hi: "एक array में कौन सी संख्याएँ prime हैं, जांचें।"
+            }
+        };
+
+        // --- Progress Tracking ---
+        function getProgress() {
+            let progress = localStorage.getItem("progress");
+            return progress ? JSON.parse(progress) : { completed: [], points: 0, badges: [] };
+        }
+        function saveProgress(progress) {
+            localStorage.setItem("progress", JSON.stringify(progress));
+        }
+        function addCompleted(id) {
+            let progress = getProgress();
+            if (!progress.completed.includes(id)) {
+                progress.completed.push(id);
+                progress.points += 20;
+                if (progress.completed.length === 1 && !progress.badges.includes("first")) progress.badges.push("first");
+                if (progress.completed.length === 5 && !progress.badges.includes("five")) progress.badges.push("five");
+                if (beginnerPaths[0].topics.every(t => progress.completed.includes(getQuestionIdByTitle(t))) && !progress.badges.includes("arrays")) progress.badges.push("arrays");
+                saveProgress(progress);
+            }
+        }
+        function getQuestionIdByTitle(title) {
+            let q = allQuestions.find(q => q.title === title);
+            return q ? q.id : null;
+        }
+
+        // --- UI Rendering ---
+        function renderHome() {
+            document.getElementById('left-panel').innerHTML = `
+                <div class="container">
+                    <h1>Welcome to LOOP-LAB!</h1>
+                    <div class="info">
+                        Practice and learn coding with interactive questions.<br>
+                        <strong>Info:</strong> Try different coding challenges and see their solutions!
+                    </div>
+                    <button class="start-btn" onclick="renderDashboard()">Go to Dashboard</button>
+                    <button class="path-btn" onclick="renderPaths()">Beginner Learning Paths</button>
+                    <div style="margin-top:18px;">
+                        <span class="badge">New: Animated Walkthroughs!</span>
+                        <span class="badge">Leaderboard</span>
+                        <span class="badge">Multi-language</span>
+                    </div>
+                </div>
+            `;
+            document.getElementById('right-panel').innerHTML = `
+                <div class="dashboard">
+                    <h2>Progress Summary</h2>
+                    ${renderProgressSummary()}
+                    <div class="leaderboard">
+                        <strong>Leaderboard</strong><br>
+                        ${leaderboardDemo.map((u,i)=>`${i+1}. ${u.name} (${u.points} pts)`).join('<br>')}
+                    </div>
+                </div>
+            `;
+        }
+        function renderDashboard() {
+            let progress = getProgress();
+            document.getElementById('left-panel').innerHTML = `
+                <div class="dashboard">
+                    <h2>Your Dashboard</h2>
+                    ${renderProgressSummary()}
+                    <button class="start-btn" onclick="renderQuestions()">Practice Questions</button>
+                    <button class="path-btn" onclick="renderPaths()">Learning Paths</button>
+                    <button class="feedback-btn" onclick="renderFeedback()">Give Feedback</button>
+                    <button class="back-btn" onclick="renderHome()">Back to Home</button>
+                </div>
+            `;
+            document.getElementById('right-panel').innerHTML = `
+                <div class="leaderboard">
+                    <strong>Leaderboard</strong><br>
+                    ${leaderboardDemo.map((u,i)=>`${i+1}. ${u.name} (${u.points} pts)`).join('<br>')}
+                </div>
+            `;
+        }
+        function renderProgressSummary() {
+            let progress = getProgress();
+            let completed = progress.completed.length;
+            let badges = progress.badges.map(bid => {
+                let badge = badgesList.find(b => b.id === bid);
+                return badge ? `<span class="badge">${badge.label}</span>` : '';
+            }).join(' ');
+            let recommendations = allQuestions.filter(q => !progress.completed.includes(q.id)).slice(0,2).map(q => q.title).join(', ');
+            return `
+                <div>
+                    <strong>Problems Solved:</strong> ${completed}<br>
+                    <strong>Points:</strong> ${progress.points}<br>
+                    <strong>Badges:</strong> ${badges || 'None yet'}<br>
+                    <strong>Recommendations:</strong> ${recommendations || 'Try creating your own challenge!'}
+                </div>
+            `;
+        }
+        function renderPaths() {
+            document.getElementById('left-panel').innerHTML = `
+                <div class="dashboard">
+                    <h2>Beginner Learning Paths</h2>
+                    <div class="paths-list">
+                        ${beginnerPaths.map((p,i)=>`
+                            <div>
+                                <div class="path-title">${p.title}</div>
+                                <button class="path-btn" onclick="renderPathTopics(${i})">Explore</button>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <button class="back-btn" onclick="renderDashboard()">Back to Dashboard</button>
+                </div>
+            `;
+            document.getElementById('right-panel').innerHTML = `<div class="dashboard"><h2>Choose a Path</h2></div>`;
+        }
+        function renderPathTopics(idx) {
+            let path = beginnerPaths[idx];
+            document.getElementById('left-panel').innerHTML = `
+                <div class="dashboard">
+                    <h2>${path.title} Path</h2>
+                    <div class="question-list">
+                        ${path.topics.map(t=>{
+                            let qid = getQuestionIdByTitle(t);
+                            let solved = getProgress().completed.includes(qid);
+                            return `<div class="question">
+                                <div class="question-title">${t} ${solved ? '<span class="badge">Solved</span>' : ''}</div>
+                                ${qid ? `<button class="try-btn" onclick="renderTry('${qid}')">Try</button>` : ''}
+                            </div>`;
+                        }).join('')}
+                    </div>
+                    <button class="back-btn" onclick="renderPaths()">Back to Paths</button>
+                </div>
+            `;
+            document.getElementById('right-panel').innerHTML = `<div class="dashboard"><h2>${path.title} Topics</h2></div>`;
+        }
+        function renderQuestions() {
+            let progress = getProgress();
+            document.getElementById('left-panel').innerHTML = `
+                <div class="dashboard">
+                    <h2>Select a Coding Question</h2>
+                    <div class="question-list">
+                        ${allQuestions.map(q=>`
+                            <div class="question">
+                                <div class="question-title">${q.title} ${progress.completed.includes(q.id) ? '<span class="badge">Solved</span>' : ''}</div>
+                                <button class="try-btn" onclick="renderTry('${q.id}')">Try</button>
+                                <button class="code-btn" onclick="renderCode('${q.id}')">Show Java Code</button>
+                                <button class="play-btn" onclick="renderWalkthrough('${q.id}')">Animated Walkthrough</button>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <button class="back-btn" onclick="renderDashboard()">Back to Dashboard</button>
+                </div>
+            `;
+            document.getElementById('right-panel').innerHTML = `<div class="dashboard"><h2>Choose a Question</h2></div>`;
+        }
+        function renderTry(type) {
+            let lang = localStorage.getItem("lang") || "en";
+            let statement = problemStatements[type][lang];
+            let inputHtml = `
+                <label>${lang === "en" ? "Enter numbers separated by commas:" : "कॉमा से अलग की गई संख्याएँ दर्ज करें:"}</label><br>
+                <input type="text" id="arrayInput" placeholder="e.g. 1,2,3,2,5,5,6">
+            `;
+            let extraInput = "";
+            if (type === "twosum") {
+                extraInput = `
+                    <br>
+                    <label>${lang === "en" ? "Enter target sum:" : "टारगेट योग दर्ज करें:"}</label><br>
+                    <input type="text" id="targetInput" placeholder="e.g. 7">
+                `;
+            }
+            let btnLabel = {
+                duplicate: lang === "en" ? "Find Duplicates" : "डुप्लिकेट खोजें",
+                twosum: lang === "en" ? "Find Pair" : "जोड़ी खोजें",
+                secondLargest: lang === "en" ? "Find 2nd Largest" : "दूसरा सबसे बड़ा खोजें",
+                largest: lang === "en" ? "Find Largest" : "सबसे बड़ा खोजें",
+                primeChecker: lang === "en" ? "Check Primes" : "प्राइम जांचें"
+            }[type];
+            let fn = {
+                duplicate: "findDuplicates",
+                twosum: "findTwoSum",
+                secondLargest: "findSecondLargest",
+                largest: "findLargest",
+                primeChecker: "checkPrimes"
+            }[type];
+            document.getElementById('left-panel').innerHTML = `
+                <div class="dashboard">
+                    <h2>${allQuestions.find(q=>q.id===type).title}</h2>
+                    <div style="margin-bottom:12px;">${statement}</div>
+                    <div class="lang-select">
+                        <label>Language:</label>
+                        <select onchange="setLang(this.value)">
+                            <option value="en" ${lang==="en"?"selected":""}>English</option>
+                            <option value="hi" ${lang==="hi"?"selected":""}>हिन्दी</option>
+                        </select>
+                    </div>
+                    <div class="question-area">
+                        ${inputHtml}
+                        ${extraInput}
+                        <br>
+                        <button class="try-btn" onclick="${fn}('${type}')">${btnLabel}</button>
+                        <div id="result"></div>
+                    </div>
+                    <button class="back-btn" onclick="renderQuestions()">Back to Questions</button>
+                </div>
+            `;
+            document.getElementById('right-panel').innerHTML = `<div class="dashboard"><h2>Try the Problem</h2></div>`;
+        }
+        function setLang(lang) {
+            localStorage.setItem("lang", lang);
+            renderQuestions();
+        }
+        function renderCode(type) {
+            let lang = localStorage.getItem("lang") || "en";
+            let statement = problemStatements[type][lang];
+            document.getElementById('left-panel').innerHTML = `
+                <div class="dashboard">
+                    <h2>${allQuestions.find(q=>q.id===type).title}</h2>
+                    <div style="margin-bottom:12px;">${statement}</div>
+                    <div class="code-area"><pre>${javaCodes[type]}</pre></div>
+                    <button class="back-btn" onclick="renderQuestions()">Back to Questions</button>
+                </div>
+            `;
+            document.getElementById('right-panel').innerHTML = `<div class="dashboard"><h2>Java Solution</h2></div>`;
+        }
+        function renderWalkthrough(type) {
+            walkthroughState = { type, step: 0, playing: false, speed: 1000 };
+            document.getElementById('left-panel').innerHTML = `
+                <div class="dashboard">
+                    <h2>Animated Walkthrough: ${allQuestions.find(q=>q.id===type).title}</h2>
+                    <div style="margin-bottom:12px;">${problemStatements[type].en}</div>
+                    <div>
+                        <label>Sample Array:</label>
+                        <input type="text" id="vizArrayInput" value="1,2,3,2,5,5,6" style="width:70%;">
+                        <button class="try-btn" onclick="startWalkthrough('${type}')">Start</button>
+                    </div>
+                    <div class="viz-controls">
+                        <button class="play-btn" onclick="playWalkthrough()">Play</button>
+                        <button class="pause-btn" onclick="pauseWalkthrough()">Pause</button>
+                        <button class="step-btn" onclick="stepWalkthrough()">Next Step</button>
+                        <label>Speed:</label>
+                        <input type="range" min="300" max="2000" value="1000" onchange="setWalkthroughSpeed(this.value)">
+                    </div>
+                    <button class="back-btn" onclick="renderQuestions()">Back to Questions</button>
+                </div>
+            `;
+            document.getElementById('right-panel').innerHTML = `<div class="dashboard"><h2>Visualization</h2><div id="viz-area"></div></div>`;
+        }
+        function renderFeedback() {
+            document.getElementById('left-panel').innerHTML = `
+                <div class="dashboard">
+                    <h2>User Feedback</h2>
+                    <div class="feedback-area">
+                        <label>How useful was this playground?</label><br>
+                        <select id="feedbackUsefulness">
+                            <option value="5">Very Useful</option>
+                            <option value="4">Useful</option>
+                            <option value="3">Average</option>
+                            <option value="2">Not Useful</option>
+                        </select>
+                        <br><br>
+                        <label>Any suggestions or issues?</label><br>
+                        <textarea id="feedbackText" rows="4"></textarea>
+                        <br>
+                        <button class="feedback-btn" onclick="submitFeedback()">Submit</button>
+                        <div id="feedbackResult"></div>
+                    </div>
+                    <button class="back-btn" onclick="renderDashboard()">Back to Dashboard</button>
+                </div>
+            `;
+            document.getElementById('right-panel').innerHTML = `<div class="dashboard"><h2>We value your feedback!</h2></div>`;
+        }
+        function submitFeedback() {
+            document.getElementById('feedbackResult').innerHTML = "Thank you for your feedback!";
+        }
+
+        // --- Problem Logic ---
+        function findDuplicates(type) {
+            const input = document.getElementById('arrayInput').value;
+            const arr = input.split(',').map(s => Number(s.trim())).filter(n => !isNaN(n));
+            const duplicates = [];
+            for (let i = 0; i < arr.length; i++) {
+                for (let j = i + 1; j < arr.length; j++) {
+                    if (arr[i] === arr[j] && !duplicates.includes(arr[i])) {
+                        duplicates.push(arr[i]);
+                    }
+                }
+            }
+            const resultDiv = document.getElementById('result');
+            if (duplicates.length > 0) {
+                resultDiv.innerHTML = `<span class="found">Duplicate elements found: ${duplicates.join(', ')}</span>`;
+                addCompleted(type);
+            } else {
+                resultDiv.innerHTML = `<span class="notfound">No duplicates found.</span>`;
+            }
+        }
+        function findTwoSum(type) {
+            const input = document.getElementById('arrayInput').value;
+            const target = Number(document.getElementById('targetInput').value);
+            const arr = input.split(',').map(s => Number(s.trim())).filter(n => !isNaN(n));
+            let found = false;
+            let pair = '';
+            for (let i = 0; i < arr.length; i++) {
+                for (let j = i + 1; j < arr.length; j++) {
+                    if (arr[i] + arr[j] === target) {
+                        found = true;
+                        pair = arr[i] + ', ' + arr[j];
+                        break;
+                    }
+                }
+                if (found) break;
+            }
+            const resultDiv = document.getElementById('result');
+            if (found) {
+                resultDiv.innerHTML = `<span class="found">Pair found: ${pair}</span>`;
+                addCompleted(type);
+            } else {
+                resultDiv.innerHTML = `<span class="notfound">No pair found for target ${target}.</span>`;
+            }
+        }
+        function findSecondLargest(type) {
+            const input = document.getElementById('arrayInput').value;
+            const arr = input.split(',').map(s => Number(s.trim())).filter(n => !isNaN(n));
+            let largest = -Infinity, second = -Infinity;
+            for (let num of arr) {
+                if (num > largest) {
+                    second = largest;
+                    largest = num;
+                } else if (num > second && num !== largest) {
+                    second = num;
+                }
+            }
+            const resultDiv = document.getElementById('result');
+            if (arr.length < 2 || second === -Infinity) {
+                resultDiv.innerHTML = `<span class="notfound">No second largest element found.</span>`;
+            } else {
+                resultDiv.innerHTML = `<span class="found">Second largest element: ${second}</span>`;
+                addCompleted(type);
+            }
+        }
+        function findLargest(type) {
+            const input = document.getElementById('arrayInput').value;
+            const arr = input.split(',').map(s => Number(s.trim())).filter(n => !isNaN(n));
+            let largest = -Infinity;
+            for (let num of arr) {
+                if (num > largest) largest = num;
+            }
+            const resultDiv = document.getElementById('result');
+            if (arr.length === 0) {
+                resultDiv.innerHTML = `<span class="notfound">No elements in array.</span>`;
+            } else {
+                resultDiv.innerHTML = `<span class="found">Largest element: ${largest}</span>`;
+                addCompleted(type);
+            }
+        }
+        function checkPrimes(type) {
+            const input = document.getElementById('arrayInput').value;
+            const arr = input.split(',').map(s => Number(s.trim())).filter(n => !isNaN(n));
+            const primes = arr.filter(isPrime);
+            const resultDiv = document.getElementById('result');
+            if (primes.length > 0) {
+                resultDiv.innerHTML = `<span class="found">Prime numbers: ${primes.join(', ')}</span>`;
+                addCompleted(type);
+            } else {
+                resultDiv.innerHTML = `<span class="notfound">No prime numbers found.</span>`;
+            }
+        }
+        function isPrime(n) {
+            if (n <= 1) return false;
+            for (let i = 2; i <= Math.sqrt(n); i++) {
+                if (n % i === 0) return false;
+            }
+            return true;
+        }
+
+        // --- Animated Walkthroughs ---
+        let walkthroughState = { type: null, step: 0, playing: false, speed: 1000, steps: [], arr: [] };
+        function startWalkthrough(type) {
+            let arrInput = document.getElementById('vizArrayInput').value;
+            let arr = arrInput.split(',').map(s => Number(s.trim())).filter(n => !isNaN(n));
+            walkthroughState.arr = arr;
+            walkthroughState.step = 0;
+            walkthroughState.playing = false;
+            walkthroughState.speed = 1000;
+            walkthroughState.steps = getWalkthroughSteps(type, arr);
+            renderWalkthroughStep();
+        }
+        function getWalkthroughSteps(type, arr) {
+            let steps = [];
+            if (type === "duplicate") {
+                for (let i = 0; i < arr.length; i++) {
+                    for (let j = i + 1; j < arr.length; j++) {
+                        steps.push({
+                            arr: [...arr],
+                            active: [i, j],
+                            found: arr[i] === arr[j] ? [i, j] : [],
+                            caption: arr[i] === arr[j] ? `Found duplicate: ${arr[i]}` : `Comparing ${arr[i]} and ${arr[j]}`
+                        });
+                    }
+                }
+            } else if (type === "twosum") {
+                let target = 7;
+                for (let i = 0; i < arr.length; i++) {
+                    for (let j = i + 1; j < arr.length; j++) {
+                        let found = arr[i] + arr[j] === target;
+                        steps.push({
+                            arr: [...arr],
+                            active: [i, j],
+                            found: found ? [i, j] : [],
+                            caption: found ? `Pair found: ${arr[i]}, ${arr[j]}` : `Checking ${arr[i]} + ${arr[j]}`
+                        });
+                        if (found) break;
+                    }
+                }
+            } else if (type === "secondLargest") {
+                let largest = -Infinity, second = -Infinity;
+                for (let idx = 0; idx < arr.length; idx++) {
+                    let num = arr[idx];
+                    let prevLargest = largest, prevSecond = second;
+                    if (num > largest) {
+                        second = largest;
+                        largest = num;
+                    } else if (num > second && num !== largest) {
+                        second = num;
+                    }
+                    steps.push({
+                        arr: [...arr],
+                        active: [idx],
+                        found: [],
+                        caption: `Step ${idx+1}: num=${num}, largest=${largest}, second=${second}`
+                    });
+                }
+                steps.push({
+                    arr: [...arr],
+                    active: [],
+                    found: [],
+                    caption: `Second largest is ${second}`
+                });
+            }
+            return steps;
+        }
+        function renderWalkthroughStep() {
+            let step = walkthroughState.steps[walkthroughState.step];
+            if (!step) {
+                document.getElementById('viz-area').innerHTML = `<div class="viz-caption">Walkthrough finished.</div>`;
+                return;
+            }
+            let arrHtml = step.arr.map((v,idx)=>{
+                let cls = "viz-box";
+                if (step.found.includes(idx)) cls += " viz-found";
+                else if (step.active.includes(idx)) cls += " viz-active";
+                return `<div class="${cls}">${v}</div>`;
+            }).join('');
+            document.getElementById('viz-area').innerHTML = `
+                <div class="viz-array">${arrHtml}</div>
+                <div class="viz-caption">${step.caption}</div>
+            `;
+        }
+        function playWalkthrough() {
+            walkthroughState.playing = true;
+            walkthroughStepLoop();
+        }
+        function walkthroughStepLoop() {
+            if (!walkthroughState.playing) return;
+            if (walkthroughState.step < walkthroughState.steps.length-1) {
+                walkthroughState.step++;
+                renderWalkthroughStep();
+                setTimeout(walkthroughStepLoop, walkthroughState.speed);
+            } else {
+                walkthroughState.playing = false;
+            }
+        }
+        function pauseWalkthrough() {
+            walkthroughState.playing = false;
+        }
+        function stepWalkthrough() {
+            walkthroughState.step = Math.min(walkthroughState.step+1, walkthroughState.steps.length-1);
+            renderWalkthroughStep();
+        }
+        function setWalkthroughSpeed(val) {
+            walkthroughState.speed = Number(val);
+        }
+
+        // --- Init ---
+        renderHome();
+
+       
+    </script>
+</body>
+</html>
